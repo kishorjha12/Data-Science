@@ -6,13 +6,19 @@ Content:
 The industrial production (IP) index measures the real output of all relevant establishments located in the United States, regardless of their ownership, but not those located in U.S. territories. This dataset tracks industrial production every month from January 1972 to August 2017.
 
 # Approaches taken for forecasting future candy_production 
+
 1. load library and datasets
+
 2.Exploratory data analysis
+
 3.Time series Decomposition
+
 4.Test stationarity of the time series
+
 5.Model building - Moving Average Method(SMA, WMA and EMA)
+
 6.Model building by using auto ARIMA
+
 7. Relevant error computation and comparison 
+
 8.Forecasting  candy production for September through December 2017
-
-
