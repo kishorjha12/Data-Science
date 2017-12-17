@@ -28,7 +28,9 @@ Steps to solve the problem
 
 5.plot the cluster number and withinness error
 
-6.compaire the cluster with original value
+6.visualising the clusters
+
+7.compaire the cluster with original value
 
 
 Source:https://www.kaggle.com/uciml/iris
