@@ -21,3 +21,6 @@ The industrial production (IP) index measures the real output of all relevant es
 7.Relevant error computation and comparison 
 
 8.Forecasting  candy production for September through December 2017
+
+
+Source: https://www.kaggle.com/rtatman/us-candy-production-by-month
