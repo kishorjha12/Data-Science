@@ -19,11 +19,11 @@ iris_data <- iris_data[,-1]
 colSums(is.na(iris_data))
 #No missing value so we are not going to impute anything
 
-#Standardize the data using 'z-score'---------------------
+#Standardize the data using 'z-score'-----------------------------
 #so that the computation of distance will be fast
 iris_std <-decostand(iris_data,"st")
 
-#Implementing k-means clusterig----------------------
+#Implementing k-means clusterig-----------------------------------
 #Execute with random 'k'
 #k-means clustering
 fit <- kmeans(iris_std,centers = 8)
@@ -46,7 +46,7 @@ for(i in 1:15){
   wss[i]<- sum(kmeans(iris_std,centers = i)$withinss)
 }
 
-#plot the cluster number and withinness error
+#plot the cluster number and withinness error----------------------------
 plot(1:15,wss,
      type="b",
      xlab="NUmber of clusters",
@@ -59,7 +59,7 @@ fit<-kmeans(iris_std,centers = 3)
 fit$withinss
 sum(fit$withinss)
 
-#visualising the clusters
+#visualising the clusters------------------------------------------------
 clusplot(iris_std,
          fit$cluster,
          lines = TRUE,
@@ -72,4 +72,5 @@ clusplot(iris_std,
          xlab = "X-axis",
          ylab = "Y-axis")
 
+#compaire the cluster with original value--------------------
 table(data$Species,fit$cluster)
