@@ -34,7 +34,7 @@ seq <- data.frame("Period"=seq(minDate,maxDate,by="months"))
 #convert data into timeseries dataset
 attach(candy_data)
 str(candy_data)
-candyts <- ts(candy_production,c(1972,1),c(2018,8),12)
+candyts <- ts(candy_production,c(1972,1),c(2017,8),12)
 str(candyts)
 
 ##Exploratory data analysis---------------
