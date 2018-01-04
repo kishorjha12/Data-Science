@@ -3,13 +3,9 @@ setwd("~/machine learning practice/timeseries/candyproduction")
 
 #load library
 library(sqldf)
-library(aTSA)
 library(ggplot2)
-library(ggfortify)
 library(forecast)
-library(tseries)
 library(TTR)
-library(MLmetrics)
 #load data
 
 candy_data<- read.csv("candy_production.csv") 
