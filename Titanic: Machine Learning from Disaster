@@ -1,1 +1,116 @@
+#load library
+library(VIM)
+library(caret)
+library(caTools)
+library(data.table)
+library(MASS)
+library(rpart)
+#load data
+train <- fread("../input/train.csv",na.strings = c(""," ",NA,"NA","N/A","null"))
+test <-fread("../input/test.csv",na.strings = c(""," ",NA,"NA","N/A","null"))
+Survived <- train$Survived
 
+train <- subset(train,select = -c(Survived))
+
+alldata<-rbind(train,test)
+
+head(alldata)
+str(alldata)
+colSums(is.na(alldata))
+
+
+
+alldata <- kNN(alldata,variable = c("Age","Fare"),k=6)
+
+alldata <- subset(alldata,select = PassengerId:Embarked)
+
+summary(alldata)
+str(alldata)
+
+#In Cabin variable more than 70% data is missing so we will remove this variable
+alldata <- subset(alldata,select = -c(Cabin))
+
+
+#Grab title from passenger names
+alldata$Title <- gsub('(.*, )|(\\..*)', '', alldata$Name)
+
+#show title counts by sex
+table(alldata$Sex, alldata$Title)
+
+#Titles with very low cell counts to be combined to "rare" level
+rare_title <- c('Dona', 'Lady', 'the Countess','Capt', 'Col', 'Don', 'Dr', 'Major', 'Rev', 'Sir', 'Jonkheer')
+
+#Reassign mlle, ms, and mme accordingly
+alldata$Title[alldata$Title == 'Mlle']  <- 'Miss'
+alldata$Title[alldata$Title == 'Ms']  <- 'Miss'
+alldata$Title[alldata$Title == 'Mme']  <- 'Mrs'
+alldata$Title[alldata$Title %in% rare_title]  <- 'Rare Title'
+
+alldata$Title<- as.factor(alldata$Title)
+#Remove name variable
+alldata <- subset(alldata,select = -c(Name))
+
+
+str(alldata)
+alldata$Pclass <- as.factor(alldata$Pclass)
+alldata$Sex <- as.factor(alldata$Sex)
+alldata$Ticket <- as.factor(alldata$Ticket)
+alldata$Title <- as.factor(alldata$Title)
+alldata$Embarked <- as.factor(alldata$Embarked)
+
+alldata$Child <- NA
+alldata$Child[alldata$Age < 18] <- 1
+alldata$Child[alldata$Age >= 18] <- 0
+
+
+
+#devive data ito train and test
+train <- alldata[1:891,]
+test <- alldata[892:1309,]
+
+#add survived into train data
+train <- cbind(train,Survived)
+
+
+
+#check for outliers
+
+#Outlier removal in Fare
+boxplot(train$Fare)
+fr <- which(train$Fare>65)
+fr <- rev(sort(fr))
+for(f in fr){train<- train[-f,]}
+
+summary(train)
+str(train)
+
+
+#train$Ticket <- as.factor(train$Ticket)
+
+
+
+d_tree <-rpart(Survived ~ Pclass+Sex+Child+SibSp+Parch+Fare+Title, data=train, method ="class")
+plotcp(d_tree)
+#plot(d_tree,main="Classification Tree for Survived Class",margin=0.15,uniform=TRUE)
+
+## find the minimum cross-validation error of the classification tree model
+min(d_tree$cptable[,"xerror"])
+
+## locate the record with the minimum corss-validation errors:
+which.min(d_tree$cptable[,"xerror"])
+
+## get the cost complexity parameter of the record with the minimum cross-validation errors:
+tree.cp<-d_tree$cptable[4,"CP"]
+tree.cp
+
+d_prune <- prune(d_tree,cp=tree.cp)
+
+d_predict <- predict(d_prune, test, type ="class")
+
+
+test$Survived <-d_predict
+
+submit <- data.frame(PassengerId = test$PassengerId, Survived = test$Survived)
+
+
+write.csv(submit, file = "submission.csv", row.names = FALSE)
